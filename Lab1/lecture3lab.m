@@ -1,0 +1,73 @@
+% ex102.m
+% modified version from http://www.phon.ucl.ac.uk/courses/spsci/matlab/lect10.html
+% get a waveform
+%fn=input('Enter WAV filename : ','s'); %Y:\TIMIT_database\TIMIT\TRAIN\DR1\FDAW0\sa1.wav
+fn = 'Y:\TIMIT_database\TIMIT\TRAIN\DR1\FDAW0\sa1.wav';
+[x,fs]=audioread(fn);
+
+% work out corresponding number of samples for X milliseconds for this fs
+% value
+ms2=floor(fs*0.002);
+ms10=floor(fs*0.01);
+ms20=floor(fs*0.02);
+ms30=floor(fs*0.03);
+
+zcd = dsp.ZeroCrossingDetector;
+
+pos = 1;
+ind = 1;
+zcdout = 0:(length(x)/ms30);
+ste = 0:(length(x)/ms30);
+while (pos + ms30) <= length(x)
+    y=x(pos:pos+ms30-1);
+    y=y-mean(y);
+    zcdout(1, ind) = zcd(y);
+    
+    ste_out(1, ind) = sum(y.^2);
+    
+    ind = ind + 1;
+    pos=pos+ms10;
+end
+
+ste_out = ste_out(1:end);
+
+a = 3;
+b = 1;
+% plot waveform
+t=(0:length(x)-1)/fs;
+figure
+subplot(a,b,1);
+plot(t,x);
+
+ylabel('Amplitude');
+
+zcdnorm = zcdout/norm(zcdout);
+ste_out_norm = ste_out/norm(ste_out);
+
+hold on
+
+
+t1 = ms30/2:ms10:length(x);
+t1 = t1(1:end-2);
+tc = t1/fs;
+subplot(a,b,1);
+plot(tc, zcdnorm);
+
+subplot(a,b,2);
+plot(tc, zcdout);
+legend('Zero Crossings');
+
+subplot(a,b,1);
+plot(tc, ste_out_norm);
+legend('Waveform','Zero Crossings', 'Short time energy');
+
+hold off
+
+subplot(a,b,3);
+plot(tc, ste_out);
+legend('short time energy');
+xlabel('Time (s)');
+
+
+
+
