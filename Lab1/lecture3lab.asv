@@ -69,21 +69,7 @@ plot(tc, ste_out);
 legend('short time energy');
 xlabel('Time (s)');
 
-%Distribution of ZC rates per 10msec window
-pos = 1;
-ind = 1;
-zcdistribution = 1:length(x)/ms10;
-zcd.release();
-while (pos + ms10) <= length(x)
-    y = x(pos:pos+ms10-1);
-    zcdistribution(1, ind) = zcd(y);
-    
-    ind = ind + 1;
-    pos = pos + ms10;
-end
-
-figure 
-histfit(zcdistribution);
+%Distribution of ZC rates
 
 
 
